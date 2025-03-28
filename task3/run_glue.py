@@ -442,13 +442,13 @@ def main():
     # TODO(cos568): load the model using from_pretrained. Remember to pass in `config` as an argument.
     # If you pass in args.model_name_or_path (e.g. "bert-base-cased"), the model weights file will be downloaded from HuggingFace. (expect one line of code)
     model = model_class.from_pretrained(args.model_name_or_path, config=config)
-    model = torch.nn.parallel.DistributedDataParallel(model)
 
     ##################################################
 
     if args.local_rank == 0:
         torch.distributed.barrier()  # Make sure only the first process in distributed training will download model & vocab
 
+    model = torch.nn.parallel.DistributedDataParallel(model)
     model.to(args.device)
 
     logger.info("Training/evaluation parameters %s", args)
