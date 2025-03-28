@@ -461,7 +461,7 @@ def main():
     print('hey1')
 
     # Wrap the model with DistributedDataParallel, specifying device_ids for multi-GPU setup
-    model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[args.local_rank])
+    model = torch.nn.parallel.DistributedDataParallel(model)
 
     # Confirm that the model has been wrapped correctly
     print('hey2')
