@@ -107,6 +107,9 @@ def train(args, train_dataset, model, tokenizer):
                    args.train_batch_size * args.gradient_accumulation_steps * (torch.distributed.get_world_size() if args.local_rank != -1 else 1))
     logger.info("  Gradient Accumulation steps = %d", args.gradient_accumulation_steps)
     logger.info("  Total optimization steps = %d", t_total)
+    
+    iteration_times = []
+    iteration_losses = []
 
     global_step = 0
     tr_loss, logging_loss = 0.0, 0.0
@@ -116,6 +119,8 @@ def train(args, train_dataset, model, tokenizer):
     for _ in train_iterator:
         epoch_iterator = tqdm(train_dataloader, desc="Iteration", disable=args.local_rank not in [-1, 0])
         for step, batch in enumerate(epoch_iterator):
+            start_time = time.time()
+            
             model.train()
             batch = tuple(t.to(args.device) for t in batch)
             inputs = {'input_ids':      batch[0],
@@ -172,9 +177,34 @@ def train(args, train_dataset, model, tokenizer):
             if args.max_steps > 0 and global_step > args.max_steps:
                 epoch_iterator.close()
                 break
+            
+            # Save timings, loss values to file
+            end_time = time.time()
+            iteration_times.append(end_time - start_time)
+            iteration_losses.append(loss)
+            
+            print(iteration_times)
+            print(iteration_losses)
+            break
+            
         if args.max_steps > 0 and global_step > args.max_steps:
             train_iterator.close()
             break
+
+        # Write metrics to a file
+        def write(filename, data):
+            with open(filename, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                
+                # Write the header (optional)
+                writer.writerow(['idx', 'val'])
+
+                # Write the values with their indices
+                for idx, val in enumerate(data):
+                    writer.writerow([idx, val])
+        
+        write(f'node_{args.local_rank}_losses.csv', iteration_losses)
+        write(f'node_{args.local_rank}_times.csv', iteration_times)
         
         ##################################################
         # TODO(cos568): call evaluate() here to get the model performance after every epoch. (expect one line of code)
@@ -239,11 +269,11 @@ def evaluate(args, model, tokenizer, prefix=""):
         results.update(result)
 
         output_eval_file = os.path.join(eval_output_dir, "eval_results.txt")
-        with open(output_eval_file, "w") as writer:
-            logger.info("***** Eval results {} *****".format(prefix))
-            for key in sorted(result.keys()):
-                logger.info("  %s = %s", key, str(result[key]))
-                writer.write("%s = %s\n" % (key, str(result[key])))
+        # with open(output_eval_file, "w") as writer:
+        #     logger.info("***** Eval results {} *****".format(prefix))
+        #     for key in sorted(result.keys()):
+        #         logger.info("  %s = %s", key, str(result[key]))
+        #         writer.write("%s = %s\n" % (key, str(result[key])))
 
     return results
 
