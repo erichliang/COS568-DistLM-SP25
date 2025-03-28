@@ -150,9 +150,9 @@ def train(args, train_dataset, model, tokenizer):
                 # Average gradients over all nodes
                 for param in model.parameters():
                     grad_sum = param.grad.clone()
-                    print(grad_sum.item())
+                    print(grad_sum)
                     torch.distributed.all_reduce(grad_sum, op=dist.ReduceOp.SUM)
-                    print(grad_sum.item())
+                    print(grad_sum)
                     breakpoint()
 
                     param.grad = grad_sum / args.world_size()
