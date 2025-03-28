@@ -149,22 +149,13 @@ def train(args, train_dataset, model, tokenizer):
                 
                 # Average gradients over all nodes
                 for param in model.parameters():
-                    if args.local_rank == 0:
-                        gather_list = [torch.zeros(param.grad.shape) for _ in range(args.world_size)]
-                    else:
-                        gather_list = None
-                    torch.distributed.gather(param.grad, gather_list=gather_list, dst=0)
-                    
-                    if args.local_rank == 0:
-                        avg_gradient = sum(gather_list) / args.world_size
-                        scatter_list = [avg_gradient for _ in range(args.world_size)]
-                    else:
-                        scatter_list = None
-                    
-                    final_gradient = torch.zeros(param.grad.shape)
-                    torch.distributed.scatter(final_gradient, scatter_list=scatter_list, src=0)
-                    
-                    param.grad = final_gradient
+                    grad_sum = param.grad.copy()
+                    print(grad_sum.item())
+                    torch.distributed.all_reduce(grad_sum, op=dist.ReduceOp.SUM)
+                    print(grad_sum.item())
+                    breakpoint()
+
+                    param.grad = grad_sum / args.world_size()
 
             tr_loss += loss.item()
             if (step + 1) % args.gradient_accumulation_steps == 0:
