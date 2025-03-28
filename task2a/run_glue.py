@@ -402,7 +402,7 @@ def main():
     local_rank = args.local_rank
     world_size = args.world_size
     torch.distributed.init_process_group(
-        backend=backend, 
+        backend='gloo', 
         init_method=f"tcp://{master_ip}:{master_port}",
         world_size=world_size, 
         rank=rank
