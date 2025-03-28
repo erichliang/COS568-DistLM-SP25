@@ -17,6 +17,8 @@ def init_distributed_mode(master_ip, master_port, local_rank, world_size, backen
         world_size=world_size, 
         rank=rank
     )
+    
+    print('yay?')
 
     # Now you can use distributed data parallelism (DDP), etc.
     dist.destroy_process_group()
