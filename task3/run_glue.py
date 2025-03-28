@@ -448,7 +448,7 @@ def main():
     if args.local_rank == 0:
         torch.distributed.barrier()  # Make sure only the first process in distributed training will download model & vocab
 
-    model = torch.nn.parallel.DistributedDataParallel(model)
+    # model = torch.nn.parallel.DistributedDataParallel(model)
     model.to(args.device)
 
     logger.info("Training/evaluation parameters %s", args)
