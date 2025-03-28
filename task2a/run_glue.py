@@ -144,14 +144,15 @@ def train(args, train_dataset, model, tokenizer):
                 for param in model.parameters():
                     if args.local_rank == 0:                        
                         gather_list = [torch.zeros(param.grad.shape) for _ in range(args.world_size)]
-                        scatter_list = [torch.zeros(param.grad.shape)]
                     else:
                         gather_list = None
-                        scatter_list = None
-                        
                     torch.distributed.gather(param.grad, gather_list=gather_list, dst=0)
                     
                     avg_gradient = sum(gather_list) / args.world_size
+                    if args.local_rank == 0:                        
+                        scatter_list = [avg_gradient for _ in range(args.world_size)]
+                    else:
+                        scatter_list = None
                     torch.distributed.scatter(avg_gradient, scatter_list=scatter_list, src=0)
                     breakpoint()
                 # all_grads = []
