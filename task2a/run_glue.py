@@ -74,9 +74,7 @@ def train(args, train_dataset, model, tokenizer):
     """ Train the model """
 
     args.train_batch_size = args.per_device_train_batch_size
-    train_sampler = DistributedSampler(train_dataset)
-    print('wow')
-    breakpoint()
+    train_sampler = DistributedSampler(train_dataset, num_ranks=args.world_size, rank=args.local_rank)
     train_dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=args.train_batch_size)
 
     if args.max_steps > 0:
@@ -124,6 +122,8 @@ def train(args, train_dataset, model, tokenizer):
                       'attention_mask': batch[1],
                       'token_type_ids': batch[2] if args.model_type in ['bert', 'xlnet'] else None,  # XLM don't use segment_ids
                       'labels':         batch[3]}
+            print(inputs)
+            breakpoint()
             outputs = model(**inputs)
             loss = outputs[0]  # model outputs are always tuple in pytorch-transformers (see doc)
             logger.info(f"Minibatch {step} loss: {loss}")

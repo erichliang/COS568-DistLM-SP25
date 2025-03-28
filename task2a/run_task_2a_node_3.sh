@@ -17,4 +17,4 @@ python3 run_glue.py \
   --master_ip 10.10.1.2 \
   --master_port 12355 \
   --world_size 4 \
-  --local_rank 0
+  --local_rank 3
