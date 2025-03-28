@@ -132,18 +132,16 @@ def train(args, train_dataset, model, tokenizer):
             else:
                 ##################################################
                 # TODO(cos568): perform backward pass here (expect one line of code)
-                
-                ##################################################
                 loss.backward()
+                ##################################################
                 torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
 
             tr_loss += loss.item()
             if (step + 1) % args.gradient_accumulation_steps == 0:
                 ##################################################
                 # TODO(cos568): perform a single optimization step (parameter update) by invoking the optimizer (expect one line of code)
-                
-                ##################################################
                 optimizer.step()
+                ##################################################
                 scheduler.step() # Update learning rate schedule
                 model.zero_grad()
                 global_step += 1
