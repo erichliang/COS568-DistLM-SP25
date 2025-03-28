@@ -405,7 +405,7 @@ def main():
         backend='gloo', 
         init_method=f"tcp://{master_ip}:{master_port}",
         world_size=world_size, 
-        rank=rank
+        rank=local_rank
     )
     
     print('yay')
