@@ -143,7 +143,7 @@ def train(args, train_dataset, model, tokenizer):
                 # Average gradients over all nodes
                 for param in model.parameters():
                     gather_list = [torch.zeros(param.grad.shape) for _ in range(args.world_size)]
-                    aaa = torch.distributed.gather(param.grad, gather_list=gather_list if args.world_size == 0 else None, dst=0)
+                    aaa = torch.distributed.gather(param.grad, gather_list=gather_list if args.local_rank == 0 else None, dst=0)
                     breakpoint()
                 # all_grads = []
                 # 
