@@ -355,6 +355,7 @@ def main():
     args = parser.parse_args()
     
     # Initialize distributed mode
+    print(f'Rank {local_rank} connecting...')
     master_ip = args.master_ip
     master_port = args.master_port
     local_rank = args.local_rank
@@ -365,9 +366,7 @@ def main():
         world_size=world_size, 
         rank=local_rank
     )
-    
-    print('yay')
-    breakpoint()
+    print('Connected!')
 
     if os.path.exists(args.output_dir) and os.listdir(args.output_dir) and args.do_train and not args.overwrite_output_dir:
         raise ValueError("Output directory ({}) already exists and is not empty. Use --overwrite_output_dir to overcome.".format(args.output_dir))
