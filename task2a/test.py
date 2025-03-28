@@ -2,14 +2,16 @@ import torch
 import torch.distributed as dist
 import os
 
-def init_distributed_mode(backend="nccl"):
+def init_distributed_mode(backend="gloo"):
     # Set up master IP and port
-    master_ip = "192.168.1.100"  # The IP of the master node
+    master_ip = "10.10.1.24"  # The IP of the master node
     master_port = "12355"  # The port to use for communication
 
     # Get rank and world size from environment variables
     rank = int(os.environ["RANK"])
+    print(rank)
     world_size = int(os.environ["WORLD_SIZE"])
+    print(world_size)
 
     # Initialize the process group for distributed training
     dist.init_process_group(
