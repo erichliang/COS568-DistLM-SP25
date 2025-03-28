@@ -360,11 +360,12 @@ def main():
     args = parser.parse_args()
     
     # Initialize distributed mode
-    print(f'Rank {local_rank} connecting...')
     master_ip = args.master_ip
     master_port = args.master_port
     local_rank = args.local_rank
     world_size = args.world_size
+    
+    print(f'Rank {local_rank} connecting...')
     torch.distributed.init_process_group(
         backend='gloo', 
         init_method=f"tcp://{master_ip}:{master_port}",
