@@ -156,9 +156,8 @@ def train(args, train_dataset, model, tokenizer):
                     
                     final_gradient = torch.zeros(param.grad.shape)
                     torch.distributed.scatter(final_gradient, scatter_list=scatter_list, src=0)
-                    breakpoint()
-                # all_grads = []
-                # 
+                    
+                    param.grad = final_gradient
 
             tr_loss += loss.item()
             if (step + 1) % args.gradient_accumulation_steps == 0:
