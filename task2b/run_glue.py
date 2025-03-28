@@ -151,7 +151,7 @@ def train(args, train_dataset, model, tokenizer):
                 for param in model.parameters():
                     grad_sum = param.grad.clone()
                     torch.distributed.all_reduce(grad_sum, op=torch.distributed.ReduceOp.SUM)
-                    param.grad = grad_sum / args.world_size()
+                    param.grad = grad_sum / args.world_size
 
             tr_loss += loss.item()
             if (step + 1) % args.gradient_accumulation_steps == 0:
