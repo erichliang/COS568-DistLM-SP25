@@ -151,7 +151,7 @@ def train(args, train_dataset, model, tokenizer):
                 for param in model.parameters():
                     grad_sum = param.grad.clone()
                     print(grad_sum)
-                    torch.distributed.all_reduce(grad_sum, op=dist.ReduceOp.SUM)
+                    torch.distributed.all_reduce(grad_sum, op=torch.distributed..ReduceOp.SUM)
                     print(grad_sum)
                     breakpoint()
 
