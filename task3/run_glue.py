@@ -144,6 +144,7 @@ def train(args, train_dataset, model, tokenizer):
                 ##################################################
                 # TODO(cos568): perform backward pass here (expect one line of code)
                 loss.backward()
+                print('hello')
                 ##################################################
                 torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
 
