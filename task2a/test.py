@@ -23,7 +23,7 @@ def init_distributed_mode(master_ip, master_port, local_rank, world_size, backen
 # This is just for testing purposes, you would need to run this on all nodes
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--master_ip", type=str, default="10.10.1.24")
+    parser.add_argument("--master_ip", type=str, default="10.10.1.2")
     parser.add_argument("--master_port", type=str, default="12355")
     parser.add_argument("--local_rank", type=int, default=-1, help="For distributed training: local_rank. If single-node training, local_rank defaults to -1.")
     args = parser.parse_args()
