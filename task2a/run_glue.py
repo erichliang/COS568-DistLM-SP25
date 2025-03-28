@@ -153,7 +153,9 @@ def train(args, train_dataset, model, tokenizer):
                         scatter_list = [avg_gradient for _ in range(args.world_size)]
                     else:
                         scatter_list = None
-                    torch.distributed.scatter(avg_gradient, scatter_list=scatter_list, src=0)
+                    
+                    final_gradient = torch.zeros(param.grad.shape)
+                    torch.distributed.scatter(final_gradient, scatter_list=scatter_list, src=0)
                     breakpoint()
                 # all_grads = []
                 # 
