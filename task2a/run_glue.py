@@ -401,7 +401,7 @@ def main():
     master_port = args.master_port
     local_rank = args.local_rank
     world_size = args.world_size
-    dist.init_process_group(
+    torch.distributed.init_process_group(
         backend=backend, 
         init_method=f"tcp://{master_ip}:{master_port}",
         world_size=world_size, 
