@@ -448,24 +448,10 @@ def main():
     if args.local_rank == 0:
         torch.distributed.barrier()  # Make sure only the first process in distributed training will download model & vocab
 
-    # model.to(args.device)
-    # print('hey1')
-    # model = torch.nn.parallel.DistributedDataParallel(model)
-    # print('hey2')
-    # Ensure the model is moved to the correct device
-    
     model.to(args.device)
-
-    # Print to confirm model is on the correct device
-    print(f"Model moved to device: {args.device}")
     print('hey1')
-
-    # Wrap the model with DistributedDataParallel, specifying device_ids for multi-GPU setup
     model = torch.nn.parallel.DistributedDataParallel(model)
-
-    # Confirm that the model has been wrapped correctly
     print('hey2')
-
 
     logger.info("Training/evaluation parameters %s", args)
 
