@@ -183,11 +183,10 @@ def train(args, train_dataset, model, tokenizer):
             # Save timings, loss values to file
             end_time = time.time()
             iteration_times.append(end_time - start_time)
-            iteration_losses.append(loss)
+            iteration_losses.append(loss.item())
             
-            print(iteration_times)
-            print(iteration_losses)
-            break
+            print(f'times: {iteration_times}')
+            print(f'losses: {iteration_losses}')
             
         if args.max_steps > 0 and global_step > args.max_steps:
             train_iterator.close()
