@@ -137,13 +137,15 @@ def train(args, train_dataset, model, tokenizer):
                 ##################################################
                 # TODO(cos568): perform backward pass here (expect one line of code)
                 loss.backward()
-                
-                # Gather all the gradients onto worker 0
-                breakpoint()
-                # all_grads = []
-                # torch.distributed.gather(l)
                 ##################################################
                 torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
+                
+                # Average gradients over all nodes
+                for param in model.parameters():
+                    aaa = torch.distributed.gather(param.grad, dst=0)
+                    breakpoint()
+                # all_grads = []
+                # 
 
             tr_loss += loss.item()
             if (step + 1) % args.gradient_accumulation_steps == 0:
