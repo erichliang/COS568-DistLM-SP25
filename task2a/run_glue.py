@@ -351,6 +351,7 @@ def main():
                         help="For distributed training: local_rank. If single-node training, local_rank defaults to -1.")
     parser.add_argument("--master_ip", type=str, default="10.10.1.2")
     parser.add_argument("--master_port", type=str, default="12355")
+    parser.add_argument("--world_size", type=int, default=4)
     args = parser.parse_args()
 
     if os.path.exists(args.output_dir) and os.listdir(args.output_dir) and args.do_train and not args.overwrite_output_dir:
@@ -394,6 +395,21 @@ def main():
     model = model_class.from_pretrained(args.model_name_or_path, config=config)
 
     ##################################################
+    
+    # Initialize distributed mode
+    master_ip = args.master_ip
+    master_port = args.master_port
+    local_rank = args.local_rank
+    world_size = args.world_size
+    dist.init_process_group(
+        backend=backend, 
+        init_method=f"tcp://{master_ip}:{master_port}",
+        world_size=world_size, 
+        rank=rank
+    )
+    
+    print('yay')
+    breakpoint()
 
     if args.local_rank == 0:
         torch.distributed.barrier()  # Make sure only the first process in distributed training will download model & vocab

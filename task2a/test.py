@@ -18,7 +18,7 @@ def init_distributed_mode(master_ip, master_port, local_rank, world_size, backen
         rank=rank
     )
     
-    print('yay?')
+    print('yay?')  # It is blocking until all processes connect
 
     # Now you can use distributed data parallelism (DDP), etc.
     dist.destroy_process_group()
