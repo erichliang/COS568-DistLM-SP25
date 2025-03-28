@@ -353,6 +353,21 @@ def main():
     parser.add_argument("--master_port", type=str, default="12355")
     parser.add_argument("--world_size", type=int, default=4)
     args = parser.parse_args()
+    
+    # Initialize distributed mode
+    master_ip = args.master_ip
+    master_port = args.master_port
+    local_rank = args.local_rank
+    world_size = args.world_size
+    torch.distributed.init_process_group(
+        backend='gloo', 
+        init_method=f"tcp://{master_ip}:{master_port}",
+        world_size=world_size, 
+        rank=local_rank
+    )
+    
+    print('yay')
+    breakpoint()
 
     if os.path.exists(args.output_dir) and os.listdir(args.output_dir) and args.do_train and not args.overwrite_output_dir:
         raise ValueError("Output directory ({}) already exists and is not empty. Use --overwrite_output_dir to overcome.".format(args.output_dir))
@@ -395,21 +410,6 @@ def main():
     model = model_class.from_pretrained(args.model_name_or_path, config=config)
 
     ##################################################
-    
-    # Initialize distributed mode
-    master_ip = args.master_ip
-    master_port = args.master_port
-    local_rank = args.local_rank
-    world_size = args.world_size
-    torch.distributed.init_process_group(
-        backend='gloo', 
-        init_method=f"tcp://{master_ip}:{master_port}",
-        world_size=world_size, 
-        rank=local_rank
-    )
-    
-    print('yay')
-    breakpoint()
 
     if args.local_rank == 0:
         torch.distributed.barrier()  # Make sure only the first process in distributed training will download model & vocab
