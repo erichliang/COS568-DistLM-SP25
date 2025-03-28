@@ -30,6 +30,9 @@ from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm, trange
 
+import sys
+sys.path.append('..')
+
 # import a previous version of the HuggingFace Transformers package
 from pytorch_transformers import (WEIGHTS_NAME, BertConfig,
                                   BertForSequenceClassification, BertTokenizer,
@@ -71,7 +74,9 @@ def train(args, train_dataset, model, tokenizer):
     """ Train the model """
 
     args.train_batch_size = args.per_device_train_batch_size
-    train_sampler = RandomSampler(train_dataset)
+    train_sampler = DistributedSampler(train_dataset)
+    print('wow')
+    breakpoint()
     train_dataloader = DataLoader(train_dataset, sampler=train_sampler, batch_size=args.train_batch_size)
 
     if args.max_steps > 0:
